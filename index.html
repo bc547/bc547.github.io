@@ -1,1 +1,32 @@
-Test works!
+<!DOCTYPE html>
+<html lang="en" ng-app="myapp" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>DingNet Mobile GPS Survey</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-sanitize.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.js"></script>
+    <script>
+        var app = angular.module('myapp', ['ui.bootstrap']);
+
+        app.controller('myCtrl', function ($http, $uibModal, NgMap) {
+            var c = this;
+            c.result = "Test resultaat";
+        })
+        ;
+    </script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"/>
+</head>
+<body>
+
+<div ng-controller="myCtrl as c">
+    <h2>DingNet Mobile GPS Survey</h2>
+
+    <pre>
+        {{ c.result }}
+    </pre>
+</div>
+</body>
+</html>
