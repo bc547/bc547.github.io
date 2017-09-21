@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="myapp" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>DingNet Mobile GPS Survey</title>
@@ -12,6 +12,7 @@
 
         app.controller('myCtrl', function ($http) {
             var c = this;
+            c.loglast = new Date();
             c.logbuffer = "";
 
             c.log = function log() {
@@ -20,7 +21,8 @@
                 }).join(' ');
 
                 c.logbuffer += line + '\n';
-            }
+                c.loglast = new Date();
+            };
 
             function isWebBluetoothEnabled() {
                 if (navigator.bluetooth) {
@@ -51,11 +53,11 @@
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"/>
 </head>
-<body>
+<body ng-app="myapp">
 
 <div ng-controller="myCtrl as c">
-    <h2>DingNet Mobile GPS Survey</h2>
-    Log output:
+    <h2>DingNet Mobile GPS Survey 1</h2>
+    Log output (last: {{ c.loglast }} ) :
     <pre>{{ c.logbuffer }}</pre>
 </div>
 </body>
