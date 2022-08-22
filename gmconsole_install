@@ -2,7 +2,6 @@
 use strict;
 use warnings;
 use Term::ANSIColor qw(:constants);
-use YAML::XS qw(LoadFile);
 use Data::Dumper;
 use experimental qw( switch );
 use Cwd 'abs_path';
@@ -57,7 +56,7 @@ logmsg('ok');
 ###########
 my $tmp = join ' ', ( 'git' );
 logmsg( 'info', "Install prerequisites ($tmp)..." );
-#execute("apt-get install -y $tmp");
+execute("apt-get install -y $tmp");
 logmsg('ok');
 
 ###########
@@ -139,67 +138,11 @@ sub execute {
     return $retcode, $cmd, $output;
 }
 
-sub line_add_replace {
-    my ( $file, $regex, $text ) = @_;
-
-    my $file_bak = $file . '.bak';
-    rename( $file, $file_bak );
-    open( my $fd_in,  '<' . $file_bak ) || logmsg( 'error', "Cannot read from $file_bak: $!\n" );
-    open( my $fd_out, '>' . $file )     || logmsg( 'error', "Cannot write to $file: $!\n" );
-    my $found = 0;
-    while (<$fd_in>) {
-        if ( $_ =~ $regex ) {
-            $found = 1;
-            print $fd_out "$text\n";
-            $_ = $text;
-        }
-        else {
-            print $fd_out $_;
-        }
-    }
-
-    if ( not $found ) { print $fd_out "$text\n"; }
-
-    close($fd_in);
-    close($fd_out);
-}
-
-sub word_replace {
-    my ( $file, $regex, $text ) = @_;
-
-    my $file_bak = $file . '.bak';
-    rename( $file, $file_bak );
-    open( my $fd_in,  '<' . $file_bak ) || logmsg( 'error', "Cannot read from $file_bak: $!\n" );
-    open( my $fd_out, '>' . $file )     || logmsg( 'error', "Cannot write to $file: $!\n" );
-    my $found = 0;
-    while (<$fd_in>) {
-        s/$regex/$text/g;
-        print $fd_out $_;
-    }
-
-    close($fd_in);
-    close($fd_out);
-}
-
-sub config_get {
-    my @args = @_;
-
-    my $tmp = $config;
-    foreach my $key (@args) {
-        if ( eval { exists $tmp->{$key} } ) {
-            $tmp = $tmp->{$key};
-        }
-        else {
-            logmsg( 'error', "Key not found in yaml config file: " . join( '->', @args ) . "\n" );
-        }
-    }
-
-    return $tmp;
-}
-
 sub show_help {
 print <<"EOF";
 Usage: $0 [--branch NAME] [--debug] [--verbose] [--repo GITREPO] DESTINATION_PATH
+
+Example: ./gmconsole_install --branch erl_gang1 --repo git@github.com:proplab-erl/kiosk.git /docker
 
 EOF
 exit 1;
