@@ -142,7 +142,7 @@ sub show_help {
 print <<"EOF";
 Usage: $0 [--branch NAME] [--debug] [--verbose] [--repo GITREPO] DESTINATION_PATH
 
-Example: ./gmconsole_install --branch erl_gang1 --repo git@github.com:proplab-erl/kiosk.git /docker
+Example: ./gmconsole_install --branch erl_gang1 --repo git\@github.com:proplab-erl/kiosk.git /docker
 
 EOF
 exit 1;
