@@ -54,8 +54,9 @@ if (-e $dst) {
 logmsg('ok');
 
 ###########
-my $tmp = join ' ', ( 'git' );
+my $tmp = join ' ', ( 'git', 'libyaml-libyaml-perl' );
 logmsg( 'info', "Install prerequisites ($tmp)..." );
+execute("apt-get update");
 execute("apt-get install -y $tmp");
 logmsg('ok');
 
@@ -88,7 +89,7 @@ if ($opt_repo) {
 
 ############
 chdir($PATH_ORIG);
-logmsg( 'task', "Done...\n" );
+logmsg( 'task', "Done... Remember to execute run_system with real root privileges\n" );
 
 ###################################################################################
 sub logmsg {
