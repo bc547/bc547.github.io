@@ -83,7 +83,7 @@ if ($opt_repo) {
     logmsg( 'info', "Pushing new repo to $opt_repo and branch $opt_branch..." );
     execute("git remote add origin $opt_repo");
     execute("git branch -M $opt_branch");
-    execute("git push -u origin $opt_branch");
+    execute("GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git push -u origin $opt_branch");
     logmsg('ok');
 }
 
