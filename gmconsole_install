@@ -61,7 +61,7 @@ execute("apt-get install -y $tmp");
 logmsg('ok');
 
 ###########
-logmsg( 'info', "Cloning installation base installation..." );
+logmsg( 'info', "Cloning base installation..." );
 execute("GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone git\@github.com:bc547/gmconsole-default.git $dst");
 logmsg('ok');
 
