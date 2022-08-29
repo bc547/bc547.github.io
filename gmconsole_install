@@ -54,7 +54,7 @@ if (-e $dst) {
 logmsg('ok');
 
 ###########
-my $tmp = join ' ', ( 'git', 'libyaml-libyaml-perl' 'vim');
+my $tmp = join ' ', ( 'git', 'libyaml-libyaml-perl', 'vim');
 logmsg( 'info', "Install prerequisites ($tmp)..." );
 execute("apt-get update");
 execute("apt-get install -y $tmp");
