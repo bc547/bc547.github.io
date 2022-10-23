@@ -2,33 +2,31 @@
 tput setaf 2
 echo "Installing $HOSTNAME..."
 tput sgr 0
-sudo su -
-echo "Installing $HOSTNAME..."
 set -e
 { set +x; } 2>/dev/null
 echo '#####################################################################################'
 set -x
-apt -y install sshfs libyaml-libyaml-perl pulseaudio
+sudo apt -y install sshfs libyaml-libyaml-perl pulseaudio
 { set +x; } 2>/dev/null
 echo '#####################################################################################'
 set -x
-mkdir -p /root/.ssh && echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID1gxeXH5AXQ7hHdbEoXDUlvdL397Ikn7sd48MHcPfXm bc547@home" >> /root/.ssh/authorized_keys
+sudo mkdir -p /root/.ssh && sudo echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID1gxeXH5AXQ7hHdbEoXDUlvdL397Ikn7sd48MHcPfXm bc547@home" >> /root/.ssh/authorized_keys
 { set +x; } 2>/dev/null
 echo '#####################################################################################'
 set -x
-echo 'alias gm-mount="mkdir -p /mnt/sftp-erl && sshfs -o allow_other,default_permissions -p22222 $HOSTNAME@sftp-erl-v1.proplab.be: /mnt/sftp-erl"' > /root/.bash_aliases
+sudo echo 'alias gm-mount="mkdir -p /mnt/sftp-erl && sshfs -o allow_other,default_permissions -p22222 $HOSTNAME@sftp-erl-v1.proplab.be: /mnt/sftp-erl"' > /root/.bash_aliases
 { set +x; } 2>/dev/null
 echo '#####################################################################################'
 set -x
-echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty --skip-login --nonewline --noissue --autologin pi --noclear %I $TERM" > /etc/systemd/system/getty@tty1.service.d/autologin.conf
+sudo echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty --skip-login --nonewline --noissue --autologin pi --noclear %I $TERM" > /etc/systemd/system/getty@tty1.service.d/autologin.conf
 { set +x; } 2>/dev/null
 echo '#####################################################################################'
 set -x
-cp /home/pi/.bashrc /root
+sudo cp /home/pi/.bashrc /root
 { set +x; } 2>/dev/null
 echo '#####################################################################################'
 set -x
-hostnamectl set-hostname "$HOSTNAME"
+sudo hostnamectl set-hostname "$HOSTNAME"
 { set +x; } 2>/dev/null
 echo '#####################################################################################'
 tput setaf 2
