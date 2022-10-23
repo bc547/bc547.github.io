@@ -10,13 +10,15 @@ mkdir -p /root/.ssh && echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID1gxeXH5AXQ7hH
 echo #####################################################################################
 echo 'alias gm-mount="mkdir -p /mnt/sftp-erl && sshfs -o allow_other,default_permissions -p22222 $HOSTNAME@sftp-erl-v1.proplab.be: /mnt/sftp-erl"' > /root/.bash_aliases
 echo #####################################################################################
-echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty --skip-login --nonewline --noissue --autologin pi --noclear %I $TERM" > /etc/systemd/system/getty@tty1.service.d
+echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty --skip-login --nonewline --noissue --autologin pi --noclear %I $TERM" > /etc/systemd/system/getty@tty1.service.d/autologin.conf
 echo #####################################################################################
 apt -y install sshfs libyaml-libyaml-perl pulseaudio
+echo #####################################################################################
+hostnamectl set-hostname HOSTNAME
 echo #####################################################################################
 set -o xtrace
 tput setaf 2
 echo
-echo "Remember to set the hostname with 'hostnamectl set-hostname erl-hallway-1' and reboot"
-echo "After reboot, login as root and run 'gm-mount' followed by '/mnt/sftp-erl/system/install.pl'"
+echo "Reboot and login as 'root'"
+echo "Run 'gm-mount' followed by '/mnt/sftp-erl/system/install.pl' to install system"
 tput sgr 0
