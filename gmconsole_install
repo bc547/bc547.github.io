@@ -1,152 +1,22 @@
-#!/usr/bin/env perl
-use strict;
-use warnings;
-use Term::ANSIColor qw(:constants);
-use Data::Dumper;
-use experimental qw( switch );
-use Cwd 'abs_path';
-use Sys::Hostname;
-use File::Basename;
-use Getopt::Long;
-
-
-my $opt_branch='gmconsole';
-my $opt_help=0;
-my $opt_debug=0;
-my $opt_verbose=0;
-my $opt_repo='';
-
-
-GetOptions(
-        "branch=s" => \$opt_branch,
-        "help" => \$opt_help,
-        "debug" => \$opt_debug,
-        "verbose" => \$opt_verbose,
-        "repo=s" => \$opt_repo
-) || logmsg('error',"Invalid arguments\n");
-
-my $dst=$ARGV[0];
-
-show_help() if ($opt_help || !$dst);
-
-
-$dst=abs_path($dst);
-
-logmsg( "task", "Installation information\n" );
-logmsg('info',"Destination: $dst\n");
-logmsg('info',"Repo: $opt_repo\n");
-logmsg('info',"Branch: $opt_branch\n");
-logmsg('info',"Verbose: $opt_verbose\n");
-logmsg('info',"Debug: $opt_debug\n");
-
-
-############
-my $PATH_ORIG = abs_path(".");              # current cwd
-my $PATH      = dirname( abs_path($0) );    # path to location of this script
-chdir($PATH);
-logmsg( "info", "Path: $PATH\n" );
-
-#############
-logmsg( 'info', "Check destination..." );
-if (-e $dst) {
-    logmsg('error',"Destination already exists\n");
-}
-logmsg('ok');
-
-###########
-my $tmp = join ' ', ( 'git', 'libyaml-libyaml-perl', 'vim');
-logmsg( 'info', "Install prerequisites ($tmp)..." );
-execute("apt-get update");
-execute("apt-get install -y $tmp");
-logmsg('ok');
-
-###########
-logmsg( 'info', "Cloning base installation..." );
-execute("GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone git\@github.com:bc547/gmconsole-default.git $dst");
-logmsg('ok');
-
-###########
-chdir $dst;
-logmsg( 'info', "Create new repo..." );
-execute("git describe --tags --first-parent --abbrev=10 --long --dirty --always > gmconsole-default.version");
-execute("rm -rf .git run_install.sh run_install");
-execute("git init");
-execute('git config user.email "bc547@proplab.be"');
-execute('git config user.name "BC547"');
-execute("git add *");
-execute("git add .gitignore");
-execute("git commit -m 'Initial commit'");
-logmsg('ok');
-
-###########
-if ($opt_repo) {
-    logmsg( 'info', "Pushing new repo to $opt_repo and branch $opt_branch..." );
-    execute("git remote add origin $opt_repo");
-    execute("git branch -M $opt_branch");
-    execute("GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git push -u origin $opt_branch");
-    logmsg('ok');
-}
-
-############
-chdir($PATH_ORIG);
-logmsg( 'task', "Done... Remember to execute run_system with real root privileges\n" );
-
-###################################################################################
-sub logmsg {
-    my ( $type, $msg ) = @_;
-
-    given ($type) {
-        when (/^skipped/) {
-            print BRIGHT_WHITE "SKIPPED\n", RESET;
-        }
-        when (/^ok/) {
-            print BRIGHT_GREEN "OK\n", RESET;
-        }
-        when (/^error/) {
-            print BRIGHT_RED "FAIL\n", RESET;
-            print $msg;
-            exit(1);
-        }
-        when (/^task/) {
-            print BRIGHT_YELLOW $msg, RESET;
-        }
-        when (/^info/) {
-            print $msg;
-        }
-        default {
-            print BRIGHT_RED "Unknown log type: $type\n", RESET;
-        }
-    }
-}
-
-sub execute {
-    my ( $cmd, $ignore_error ) = @_;
-
-    #print "$cmd\n";
-    #    return;
-
-    print "\n-> $cmd\n" if ($opt_verbose);
-
-    my $output  = `$cmd 2>&1`;
-    my $retcode = $?;
-
-    if ( $retcode != 0 && (! $ignore_error) ) {
-        logmsg( 'error', "CMD:\n$cmd\nOUTPUT:\n$output" );
-    }
-
-    #logmsg( 'info', "CMD:\n$cmd\nOUTPUT:\n$output" );
-
-    return $retcode, $cmd, $output;
-}
-
-sub show_help {
-print <<"EOF";
-Usage: $0 [--branch NAME] [--debug] [--verbose] [--repo GITREPO] DESTINATION_PATH
-
-Example: ./gmconsole_install --branch erl_gang1 --repo git\@github.com:proplab-erl/kiosk.git /docker
-
-EOF
-exit 1;
-}
-
-
+#/usr/bin/env bash
+set -o xtrace
+set -e
+echo #####################################################################################
+sudo su -
+echo #####################################################################################
+cp /home/pi/.bashrc /root
+echo #####################################################################################
+mkdir -p /root/.ssh && echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID1gxeXH5AXQ7hHdbEoXDUlvdL397Ikn7sd48MHcPfXm bc547@home" >> /root/.ssh/authorized_keys
+echo #####################################################################################
+echo 'alias gm-mount="mkdir -p /mnt/sftp-erl && sshfs -o allow_other,default_permissions -p22222 $HOSTNAME@sftp-erl-v1.proplab.be: /mnt/sftp-erl"' > /root/.bash_aliases
+echo #####################################################################################
+echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty --skip-login --nonewline --noissue --autologin pi --noclear %I $TERM" > /etc/systemd/system/getty@tty1.service.d
+echo #####################################################################################
+apt -y install sshfs libyaml-libyaml-perl pulseaudio
+echo #####################################################################################
+set -o xtrace
+tput setaf 2
+echo
+echo "Remember to set the hostname with 'hostnamectl set-hostname erl-hallway-1' and reboot"
+echo "After reboot, login as root and run 'gm-mount' followed by '/mnt/sftp-erl/system/install.pl'"
+tput sgr 0
