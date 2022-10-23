@@ -15,6 +15,7 @@ sudo mkdir -p /root/.ssh && echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID1gxeXH5A
 echo '#####################################################################################'
 set -x
 sudo echo 'alias gm-mount="mkdir -p /mnt/sftp-erl && sshfs -o allow_other,default_permissions -p22222 $HOSTNAME@sftp-erl-v1.proplab.be: /mnt/sftp-erl"' | sudo tee /root/.bash_aliases > /dev/null
+sudo echo 'alias gm-install="/mnt/sftp-erl/system/install.pl"' | sudo tee -a /root/.bash_aliases > /dev/null
 { set +x; } 2>/dev/null
 echo '#####################################################################################'
 set -x
@@ -32,5 +33,5 @@ echo '##########################################################################
 tput setaf 2
 echo
 echo "Reboot and login as 'root'"
-echo "Run 'gm-mount' followed by '/mnt/sftp-erl/system/install.pl' to install system"
+echo "Run 'gm-mount' followed by 'gm-install' to install system"
 tput sgr 0
