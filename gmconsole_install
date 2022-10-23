@@ -3,6 +3,7 @@ tput setaf 2
 echo "Installing $HOSTNAME..."
 tput sgr 0
 sudo su -
+echo "Installing $HOSTNAME..."
 set -e
 { set +x; } 2>/dev/null
 echo '#####################################################################################'
@@ -27,7 +28,7 @@ cp /home/pi/.bashrc /root
 { set +x; } 2>/dev/null
 echo '#####################################################################################'
 set -x
-hostnamectl set-hostname $HOSTNAME
+hostnamectl set-hostname "$HOSTNAME"
 { set +x; } 2>/dev/null
 echo '#####################################################################################'
 tput setaf 2
